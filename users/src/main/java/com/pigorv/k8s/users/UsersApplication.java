@@ -1,11 +1,11 @@
-package com.pigorv.k8s.orders;
+package com.pigorv.k8s.users;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Application {
+public class UsersApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(UsersApplication.class, args);
     }
 }
