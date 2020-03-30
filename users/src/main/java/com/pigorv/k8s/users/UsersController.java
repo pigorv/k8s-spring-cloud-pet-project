@@ -2,9 +2,10 @@ package com.pigorv.k8s.users;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/users")
 public class UsersController {
     private final Collection<User> registeredUsers = new HashSet<>();
+    @Value("${k8sPet.services.orders.url}")
+    private String orderServiceUrl;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -43,10 +46,11 @@ public class UsersController {
 
     @GetMapping("/{userName}/products")
     public String[] getProductsByUser(@PathVariable String userName) {
-        return restTemplate.getForObject("http://localhost:8383/orders/users/" + userName, String[].class);
+        return restTemplate.getForObject(orderServiceUrl + "/users/" + userName, String[].class);
     }
 
     @Bean
+    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  eureka:
+    build:
+      context: ./eureka
+      args:
+        REVISION: 1.0-SNAPSHOT
+    ports:
+      - "8761:8080"
+
+networks:
+  default:
+    driver: bridge

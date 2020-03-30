@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,18 +23,23 @@ public class OrdersController {
     private Map<Long, Order> orderList = new HashMap<>();
     private long nextId = 1;
 
+    @Value("${k8sPet.services.users.url}")
+    private String userServiceUrl;
+    @Value("${k8sPet.services.products.url}")
+    private String productServiceUrl;
+
     @Autowired
     RestTemplate restTemplate;
 
     @PostMapping
     public ResponseEntity<Order> createNewOrder(@RequestBody Order order) {
-        UserDto user = restTemplate.getForObject("http://localhost:8181/users/" + order.getUserName(), UserDto.class);
+        UserDto user = restTemplate.getForObject(userServiceUrl + "/" + order.getUserName(), UserDto.class);
         if (user == null || !user.isActive()) {
             return ResponseEntity.badRequest().build();
         }
 
         try {
-            restTemplate.put("http://localhost:8282/products/" + order.getProduct(), null);
+            restTemplate.put(productServiceUrl + "/" + order.getProduct(), null);
         } catch (RestClientException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -56,6 +63,7 @@ public class OrdersController {
     }
 
     @Bean
+    @LoadBalanced
     private RestTemplate getRestTemplate() {
         return new RestTemplate();
     }

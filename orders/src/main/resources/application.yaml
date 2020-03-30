@@ -1,2 +1,18 @@
 server:
   port: 8383
+
+spring:
+  application:
+    name: orders
+
+k8sPet:
+  services:
+    products:
+      url: http://products/products
+    users:
+      url: http://users/users
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

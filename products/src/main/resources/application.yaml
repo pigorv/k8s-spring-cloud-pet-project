@@ -1,2 +1,11 @@
 server:
   port: 8282
+
+spring:
+  application:
+    name: products
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
